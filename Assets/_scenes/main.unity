@@ -406,7 +406,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Grid: {fileID: 292769135}
-  Board: {fileID: 0}
+  Board: {fileID: 91960508}
   PiecesSpawner: {fileID: 91960506}
 --- !u!4 &998287113
 Transform:

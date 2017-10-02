@@ -12,10 +12,11 @@ public class PiecesSpawner : MonoBehaviour
 
     public void Spawn()
     {
-        var height = GameManager.Instance.Grid.GridHeight;
-        var width = GameManager.Instance.Grid.GridWidth;
-        var tilePositions = GameManager.Instance.Grid.TilePositions;
-        var boardState = GameManager.Instance.Board.State;
+        var grid = GameManager.Instance.Grid;
+        var height = grid.GridHeight;
+        var width = grid.GridWidth;
+        var tilePositions = grid.TilePositions;
+        var pieces = GameManager.Instance.Board.Pieces;
 
         for (var y = 0; y < height; y++)
         {
@@ -23,26 +24,11 @@ public class PiecesSpawner : MonoBehaviour
             {
                 if (y < InitialRows)
                 {
-                    var piece = Instantiate(Piece1Prefab);
-                    piece.position = tilePositions[x, y];
-                    piece.parent = transform;
-
-                    var pieceScript = piece.GetComponent<Piece>();
-                    pieceScript.IsOwnedByPlayer = true;
-                    pieceScript.Position = new Vector2(x, y);
-
-                    boardState[x, y] = (int) TileState.Player1;
+                    pieces[x, y] = Piece.Create(Piece1Prefab, tilePositions[x, y], transform, true, new Vector2(x, y));
                 }
                 else if (y > height - (InitialRows + 1))
                 {
-                    var piece = Instantiate(Piece2Prefab);
-                    piece.position = tilePositions[x, y];
-                    piece.parent = transform;
-
-                    var pieceScript = piece.GetComponent<Piece>();
-                    pieceScript.Position = new Vector2(x, y);
-
-                    boardState[x, y] = (int) TileState.Player2;
+                    pieces[x, y] = Piece.Create(Piece2Prefab, tilePositions[x, y], transform, true, new Vector2(x, y));
                 }
             }
         }

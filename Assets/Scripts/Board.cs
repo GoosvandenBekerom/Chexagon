@@ -2,18 +2,11 @@
 
 public class Board : MonoBehaviour
 {
-    public int[,] State { get; set; }
+    public Piece[,] Pieces { get; set; }
 
     public void Init()
     {
         var grid = GameManager.Instance.Grid;
-        State = new int[grid.GridWidth, grid.GridHeight];
+        Pieces = new Piece[grid.GridWidth, grid.GridHeight];
     }
-}
-
-public enum TileState
-{
-    Empty = 0,
-    Player1 = 1,
-    Player2 = 2
 }
