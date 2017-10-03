@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     public Board Board;
     public PiecesSpawner PiecesSpawner;
 
+    public bool IsPlayerTurn { get; set; }
+
     void Awake()
     {
         _instance = this;

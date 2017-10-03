@@ -21,9 +21,11 @@ GameObject:
   - component: {fileID: 4535957359121946}
   - component: {fileID: 33476464877385834}
   - component: {fileID: 23457026872923428}
-  m_Layer: 0
+  - component: {fileID: 64493829630498688}
+  - component: {fileID: 114772675305437758}
+  m_Layer: 8
   m_Name: Hexagon
-  m_TagString: Untagged
+  m_TagString: Tile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -80,3 +82,30 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1074913042052222}
   m_Mesh: {fileID: 4300000, guid: 72567bf8ec1261745be8b2b77afed66e, type: 3}
+--- !u!64 &64493829630498688
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1074913042052222}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Convex: 0
+  m_InflateMesh: 0
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 4300000, guid: 72567bf8ec1261745be8b2b77afed66e, type: 3}
+--- !u!114 &114772675305437758
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1074913042052222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fa18ac593142464f9bdc38c5287ec65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OriginalMaterial: {fileID: 2100000, guid: 5568bf329b8d1184c8aa4dc2446849f6, type: 2}
+  HighlightMaterial: {fileID: 2100000, guid: d3f2986274dc47a46a8c17d82bf10045, type: 2}

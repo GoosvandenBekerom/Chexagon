@@ -22,13 +22,15 @@ public class PiecesSpawner : MonoBehaviour
         {
             for (var x = 0; x < width; x++)
             {
+                if (x % 2 != 0 && (y == 0 || y == height - 1)) continue;
+
                 if (y < InitialRows)
                 {
                     pieces[x, y] = Piece.Create(Piece1Prefab, tilePositions[x, y], transform, true, new Vector2(x, y));
                 }
                 else if (y > height - (InitialRows + 1))
                 {
-                    pieces[x, y] = Piece.Create(Piece2Prefab, tilePositions[x, y], transform, true, new Vector2(x, y));
+                    pieces[x, y] = Piece.Create(Piece2Prefab, tilePositions[x, y], transform, false, new Vector2(x, y));
                 }
             }
         }

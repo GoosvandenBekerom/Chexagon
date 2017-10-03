@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Grid : MonoBehaviour
 {
@@ -22,9 +23,12 @@ public class Grid : MonoBehaviour
 
     public Vector3[,] TilePositions { get; private set; }
 
+    private Tile[,] tiles;
+
     public void Generate()
     {
         TilePositions = new Vector3[GridWidth, GridHeight];
+        tiles = new Tile[GridWidth, GridHeight];
 
         AddGap();
         CalcStartPos();
@@ -72,7 +76,30 @@ public class Grid : MonoBehaviour
                 hex.name = "Hexagon " + x + "|" + y;
 
                 TilePositions[x, y] = worldPos;
+                tiles[x, y] = hex.GetComponent<Tile>();
             }
         }
+    }
+
+    [HideInInspector]
+    public readonly Dictionary<Tile, Vector2> HighlightedTiles = new Dictionary<Tile, Vector2>();
+
+    public void HighlightTiles(ICollection<Vector2> tilePositions)
+    {
+        foreach (var pos in tilePositions)
+        {
+            var tile = tiles[(int) pos.x, (int) pos.y];
+            tile.Highlight();
+            HighlightedTiles.Add(tile, pos);
+        }
+    }
+
+    public void UnHighlightTiles()
+    {
+        foreach (var tile in HighlightedTiles.Keys)
+        {
+            tile.UnHighlight();
+        }
+        HighlightedTiles.Clear();
     }
 }
