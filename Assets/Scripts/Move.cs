@@ -18,7 +18,6 @@ public class Move
     public void Execute()
     {
         Piece.MoveTo(Destination);
-        
         if (IsKill) GameManager.Instance.Board.KillPiece(Target);
     }
 }

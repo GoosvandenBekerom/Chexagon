@@ -108,3 +108,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsOwnedByPlayer: 0
+  IsKing: 0
+  CrownPrefab: {fileID: 4019767154623776, guid: c0f6ad36d2d98704a810cfd343487bf3,
+    type: 2}

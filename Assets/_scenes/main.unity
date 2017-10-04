@@ -197,8 +197,7 @@ MonoBehaviour:
   GridWidth: 7
   GridHeight: 7
   gap: 0.1
-  OriginalMaterial: {fileID: 0}
-  HighlightMaterial: {fileID: 0}
+  HighlightedIsKill: 0
 --- !u!4 &292769136
 Transform:
   m_ObjectHideFlags: 0

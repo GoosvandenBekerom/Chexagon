@@ -4,6 +4,9 @@ public class Piece : MonoBehaviour
 {
     public bool IsOwnedByPlayer = false;
     public bool IsKing = false;
+
+    [Header("King stuff")]
+    public Transform CrownPrefab;
     
     public Vector2 Position { get; set; }
 
@@ -41,5 +44,19 @@ public class Piece : MonoBehaviour
         Position = newPos;
         transform.position = GameManager.Instance.Grid.TilePositions[(int) Position.x, (int) Position.y];
         UnHighlight();
+
+        if (!IsKing) CheckKingStatus();
+    }
+
+    private void CheckKingStatus()
+    {
+        IsKing = IsOwnedByPlayer && (int)Position.y == GameManager.Instance.Grid.GridHeight - 1 ||
+                 !IsOwnedByPlayer && (int)Position.y == 0;
+
+        if (IsKing)
+        {
+            var crown = Instantiate(CrownPrefab, transform);
+            //crown.parent = transform;
+        }
     }
 }
