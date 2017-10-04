@@ -109,3 +109,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OriginalMaterial: {fileID: 2100000, guid: 5568bf329b8d1184c8aa4dc2446849f6, type: 2}
   HighlightMaterial: {fileID: 2100000, guid: d3f2986274dc47a46a8c17d82bf10045, type: 2}
+  KillMaterial: {fileID: 2100000, guid: 11b539a5850b3344f98db1ecbc24e531, type: 2}

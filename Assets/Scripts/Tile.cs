@@ -5,6 +5,7 @@ public class Tile : MonoBehaviour
     [Header("Materials")]
     public Material OriginalMaterial;
     public Material HighlightMaterial;
+    public Material KillMaterial;
 
     private Renderer rend;
 
@@ -13,9 +14,9 @@ public class Tile : MonoBehaviour
         rend = GetComponent<Renderer>();
     }
 
-    public void Highlight()
+    public void Highlight(bool isKill)
     {
-        rend.material = HighlightMaterial;
+        rend.material = isKill ? KillMaterial : HighlightMaterial;
     }
 
     public void UnHighlight()

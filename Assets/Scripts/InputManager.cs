@@ -50,8 +50,10 @@ public class InputManager : MonoBehaviour
 
             selectedPiece = piece;
             selectedPiece.Highlight();
-            var allowedMoves = GameManager.Instance.Board.GetAllowedMoves(selectedPiece);
-            GameManager.Instance.Grid.HighlightTiles(allowedMoves);
+            bool isKill;
+            var allowedMoves = GameManager.Instance.Board.GetAllowedMoves(selectedPiece, out isKill);
+            
+            GameManager.Instance.Grid.HighlightTiles(allowedMoves, isKill);
         }
     }
 
@@ -59,12 +61,12 @@ public class InputManager : MonoBehaviour
     {
         if (selectedPiece == null) return;
 
-        var allowed = GameManager.Instance.Grid.HighlightedTiles;
+        var moves = GameManager.Instance.Grid.HighlightedTiles;
         var tile = t.GetComponent<Tile>();
 
-        if (allowed.ContainsKey(tile))
+        if (moves.ContainsKey(tile))
         {
-            selectedPiece.MoveTo(allowed[tile]);
+            moves[tile].Execute();
             GameManager.Instance.Grid.UnHighlightTiles();
             selectedPiece = null;
         }

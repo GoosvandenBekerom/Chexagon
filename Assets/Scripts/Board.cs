@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -11,34 +12,53 @@ public class Board : MonoBehaviour
         var grid = GameManager.Instance.Grid;
         Pieces = new Piece[grid.GridWidth, grid.GridHeight];
     }
-
-    public List<Vector2> GetAllowedMoves(Piece piece)
+    
+    public List<Move> GetAllowedMoves(Piece piece, out bool isKill)
     {
         var adjacentTiles = GetAdjacentTiles(piece);
 
-        var allowed = new List<Vector2>();
-        var required = new List<Vector2>();
+        var allowed = new List<Move>();
+        var required = new List<Move>();
 
-        foreach (var tile in adjacentTiles)
+        foreach (var kvp in adjacentTiles)
         {
-            var adjacent = Pieces[(int) tile.x, (int) tile.y];
-            if (adjacent == null) allowed.Add(tile);
-            else if (!adjacent.IsOwnedByPlayer) required.Add(tile);
+            var tile = kvp.Key;
+            var dir = kvp.Value;
+            int x = (int) tile.x, y = (int) tile.y;
+
+            var adjacent = Pieces[x, y];
+            if (adjacent == null) allowed.Add(new Move(piece, tile));
+            else if (!adjacent.IsOwnedByPlayer)
+            {
+                // check if it is possible to kill a piece
+                var killLocation = GetAdjacentPiece(adjacent, dir);
+                if (killLocation.Key != null) continue;
+
+                var pos = killLocation.Value;
+                if (InBounds(pos)) required.Add(new Move(piece, pos, true, adjacent));
+            }
         }
 
-        return required.Count == 0 ? allowed : required;
+        if (required.Count > 0)
+        {
+            isKill = true;
+            return required;
+        }
+
+        isKill = false;
+        return allowed;
     }
 
-    private List<Vector2> GetAdjacentTiles(Piece piece)
+    private Dictionary<Vector2, TileDirection> GetAdjacentTiles(Piece piece)
     {
-        var adjacentTiles = new List<Vector2>();
+        var adjacentTiles = new Dictionary<Vector2, TileDirection>();
         var x = (int)piece.Position.x;
         var y = (int)piece.Position.y;
 
         var left = new Vector2(x - 1, y);
         var right = new Vector2(x + 1, y);
-        if (InBounds(left)) adjacentTiles.Add(left);
-        if (InBounds(right)) adjacentTiles.Add(right);
+        if (InBounds(left)) adjacentTiles.Add(left, TileDirection.Left);
+        if (InBounds(right)) adjacentTiles.Add(right, TileDirection.Right);
 
         // Even row
         var topLeft = new Vector2(x - 1, y + 1);
@@ -56,12 +76,63 @@ public class Board : MonoBehaviour
         }
 
         // Add all tiles the player is allowed to move to
-        if (InBounds(topLeft) && (piece.IsOwnedByPlayer || piece.IsKing)) adjacentTiles.Add(topLeft);
-        if (InBounds(topRight) && (piece.IsOwnedByPlayer || piece.IsKing)) adjacentTiles.Add(topRight);
-        if (InBounds(botRight) && (!piece.IsOwnedByPlayer || piece.IsKing)) adjacentTiles.Add(botRight);
-        if (InBounds(botLeft) && (!piece.IsOwnedByPlayer || piece.IsKing)) adjacentTiles.Add(botLeft);
+        if (InBounds(topLeft) && (piece.IsOwnedByPlayer || piece.IsKing)) adjacentTiles.Add(topLeft, TileDirection.TopLeft);
+        if (InBounds(topRight) && (piece.IsOwnedByPlayer || piece.IsKing)) adjacentTiles.Add(topRight, TileDirection.TopRight);
+        if (InBounds(botRight) && (!piece.IsOwnedByPlayer || piece.IsKing)) adjacentTiles.Add(botRight, TileDirection.BottomRight);
+        if (InBounds(botLeft) && (!piece.IsOwnedByPlayer || piece.IsKing)) adjacentTiles.Add(botLeft, TileDirection.BottomLeft);
 
         return adjacentTiles;
+    }
+
+    /// <summary>
+    /// Get the adjacent piece in the given direction
+    /// </summary>
+    /// <param name="piece"></param>
+    /// <param name="direction"></param>
+    /// <returns>
+    /// Pair of adjacent piece in the given direction (null if tile is empty or out of bounds), and its position
+    /// </returns>
+    private KeyValuePair<Piece, Vector2> GetAdjacentPiece(Piece piece, TileDirection direction)
+    {
+        Vector2 tile;
+        var x = (int)piece.Position.x;
+        var y = (int)piece.Position.y;
+        var odd = y % 2 != 0;
+
+        switch (direction)
+        {
+            case TileDirection.Left:
+                tile = new Vector2(x - 1, y);
+                break;
+            case TileDirection.TopLeft:
+                tile = new Vector2(x - 1, y + 1);
+                if (odd) tile.x += 1;
+                break;
+            case TileDirection.TopRight:
+                tile = new Vector2(x, y + 1);
+                if (odd) tile.x += 1;
+                break;
+            case TileDirection.Right:
+                tile = new Vector2(x + 1, y);
+                //possible = true;
+                break;
+            case TileDirection.BottomRight:
+                tile = new Vector2(x, y - 1);
+                if (odd) tile.x += 1;
+                break;
+            case TileDirection.BottomLeft:
+                tile = new Vector2(x - 1, y - 1);
+                if (odd) tile.x += 1;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException("direction", direction, null);
+        }
+
+        int x2 = (int)tile.x, y2 = (int)tile.y;
+        var pos = new Vector2(x2, y2);
+        return InBounds(tile) 
+            ? new KeyValuePair<Piece, Vector2>(Pieces[x2, y2], pos) 
+            : new KeyValuePair<Piece, Vector2>(null, pos);
     }
 
     private bool InBounds(Vector2 p)
@@ -79,4 +150,28 @@ public class Board : MonoBehaviour
         Pieces[x, y] = null;
         Pieces[(int) newPos.x, (int) newPos.y] = piece;
     }
+
+    public void KillPiece(Vector2 pos)
+    {
+        var x = (int) pos.x;
+        var y = (int) pos.y;
+        var piece = Pieces[x, y];
+        Destroy(piece.gameObject);
+        Pieces[x, y] = null;
+    }
+
+    public void KillPiece(Piece piece)
+    {
+        KillPiece(piece.Position);
+    }
+}
+
+public enum TileDirection
+{
+    Left,
+    TopLeft,
+    TopRight,
+    Right,
+    BottomRight,
+    BottomLeft
 }

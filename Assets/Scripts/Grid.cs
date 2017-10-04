@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Grid : MonoBehaviour
@@ -82,15 +83,19 @@ public class Grid : MonoBehaviour
     }
 
     [HideInInspector]
-    public readonly Dictionary<Tile, Vector2> HighlightedTiles = new Dictionary<Tile, Vector2>();
+    public readonly Dictionary<Tile, Move> HighlightedTiles = new Dictionary<Tile, Move>();
 
-    public void HighlightTiles(ICollection<Vector2> tilePositions)
+    [HideInInspector]
+    public bool HighlightedIsKill = false;
+
+    public void HighlightTiles(ICollection<Move> moves, bool isKill)
     {
-        foreach (var pos in tilePositions)
+        foreach (var move in moves)
         {
-            var tile = tiles[(int) pos.x, (int) pos.y];
-            tile.Highlight();
-            HighlightedTiles.Add(tile, pos);
+            var tile = tiles[(int) move.Destination.x, (int) move.Destination.y];
+            HighlightedIsKill = isKill;
+            tile.Highlight(isKill);
+            HighlightedTiles.Add(tile, move);
         }
     }
 
@@ -101,5 +106,6 @@ public class Grid : MonoBehaviour
             tile.UnHighlight();
         }
         HighlightedTiles.Clear();
+        HighlightedIsKill = false;
     }
 }
