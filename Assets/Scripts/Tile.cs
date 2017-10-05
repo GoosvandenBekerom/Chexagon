@@ -14,7 +14,7 @@ public class Tile : MonoBehaviour
         rend = GetComponent<Renderer>();
     }
 
-    public void Highlight(bool isKill)
+    public void Highlight(bool isKill = false)
     {
         rend.material = isKill ? KillMaterial : HighlightMaterial;
     }

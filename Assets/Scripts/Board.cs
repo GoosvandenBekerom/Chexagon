@@ -1,18 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class Board : MonoBehaviour
 {
     public Piece[,] Pieces { get; set; }
 
+    public List<Move> RequiredMoves { get; private set; }
+
     public void Init()
     {
         var grid = GameManager.Instance.Grid;
         Pieces = new Piece[grid.GridWidth, grid.GridHeight];
+        RequiredMoves = new List<Move>();
     }
-    
+
+    public void UpdateRequiredMoves()
+    {
+        RequiredMoves.Clear();
+        foreach (var piece in Pieces)
+        {
+            if (piece == null || piece.IsOwnedByPlayer != GameManager.Instance.IsPlayerTurn) continue;
+            
+            bool isKill;
+            var moves = GetAllowedMoves(piece, out isKill);
+            if (isKill) RequiredMoves.AddRange(moves);
+        }
+    }
+
+    public bool UpdateRequiredMoves(Piece piece)
+    {
+        RequiredMoves.Clear();
+
+        if (piece == null || piece.IsOwnedByPlayer != GameManager.Instance.IsPlayerTurn) return false;
+
+        bool isKill;
+        var moves = GetAllowedMoves(piece, out isKill);
+        if (isKill)
+        {
+            RequiredMoves.AddRange(moves);
+            GameManager.Instance.Grid.HighlightRequiredTiles(RequiredMoves);
+        }
+
+        return isKill;
+    }
+
     public List<Move> GetAllowedMoves(Piece piece, out bool isKill)
     {
         var adjacentTiles = GetAdjacentTiles(piece);
@@ -28,9 +60,9 @@ public class Board : MonoBehaviour
 
             var adjacent = Pieces[x, y];
             if (adjacent == null) allowed.Add(new Move(piece, tile));
-            else if (!adjacent.IsOwnedByPlayer)
+            else if (adjacent.IsOwnedByPlayer != GameManager.Instance.IsPlayerTurn)
             {
-                // check if it is possible to kill a piece
+                // check if it is possible to kill the adjacent piece
                 var killLocation = GetAdjacentPiece(adjacent, dir);
                 if (killLocation.Key != null) continue;
 

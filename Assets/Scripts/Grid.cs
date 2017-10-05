@@ -88,7 +88,7 @@ public class Grid : MonoBehaviour
     [HideInInspector]
     public bool HighlightedIsKill = false;
 
-    public void HighlightTiles(ICollection<Move> moves, bool isKill)
+    public void HighlightMoves(ICollection<Move> moves, bool isKill)
     {
         foreach (var move in moves)
         {
@@ -107,5 +107,27 @@ public class Grid : MonoBehaviour
         }
         HighlightedTiles.Clear();
         HighlightedIsKill = false;
+    }
+
+    private readonly List<Tile> requiredHighlightTiles = new List<Tile>();
+
+    public void HighlightRequiredTiles(ICollection<Move> moves)
+    {
+        foreach (var move in moves)
+        {
+            var pos = move.Piece.Position;
+            var tile = tiles[(int) pos.x, (int) pos.y];
+            tile.Highlight();
+            requiredHighlightTiles.Add(tile);
+        }
+    }
+
+    public void UnHighlightRequiredTiles()
+    {
+        foreach (var tile in requiredHighlightTiles)
+        {
+            tile.UnHighlight();
+        }
+        requiredHighlightTiles.Clear();
     }
 }

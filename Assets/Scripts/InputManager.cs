@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
@@ -32,8 +33,16 @@ public class InputManager : MonoBehaviour
     {
         var piece = t.GetComponent<Piece>();
 
-        if (!piece.IsOwnedByPlayer) return;
+        //if (!piece.IsOwnedByPlayer) return; //TODO: replace this when AI is implemented
+        if (piece.IsOwnedByPlayer != GameManager.Instance.IsPlayerTurn) return;
 
+        var requiredToMove = GameManager.Instance.Board.RequiredMoves;
+        if (requiredToMove.Count > 0 && requiredToMove.All(m => m.Piece != piece))
+        {
+            GameManager.Instance.Grid.HighlightRequiredTiles(requiredToMove);
+            return;
+        }
+        
         if (piece == selectedPiece)
         {
             selectedPiece = null;
@@ -53,7 +62,7 @@ public class InputManager : MonoBehaviour
             bool isKill;
             var allowedMoves = GameManager.Instance.Board.GetAllowedMoves(selectedPiece, out isKill);
             
-            GameManager.Instance.Grid.HighlightTiles(allowedMoves, isKill);
+            GameManager.Instance.Grid.HighlightMoves(allowedMoves, isKill);
         }
     }
 
@@ -66,9 +75,24 @@ public class InputManager : MonoBehaviour
 
         if (moves.ContainsKey(tile))
         {
+            var move = moves[tile];
             moves[tile].Execute();
+            
             GameManager.Instance.Grid.UnHighlightTiles();
+            GameManager.Instance.Grid.UnHighlightRequiredTiles();
+
+            if (move.IsKill)
+            {
+                // Check if its possible to do a double jump
+                if (GameManager.Instance.Board.UpdateRequiredMoves(selectedPiece))
+                {
+                    GameManager.Instance.Grid.HighlightMoves(GameManager.Instance.Board.RequiredMoves, true);
+                    return;
+                }
+            }
+
             selectedPiece = null;
+            GameManager.Instance.EndTurn();
         }
     }
 }
