@@ -16,7 +16,7 @@ public class PiecesSpawner : MonoBehaviour
         var height = grid.GridHeight;
         var width = grid.GridWidth;
         var tilePositions = grid.TilePositions;
-        var pieces = GameManager.Instance.Board.Pieces;
+        var boardState = GameManager.Instance.Board.Pieces;
 
         for (var y = 0; y < height; y++)
         {
@@ -26,11 +26,11 @@ public class PiecesSpawner : MonoBehaviour
 
                 if (y < InitialRows)
                 {
-                    pieces[x, y] = Piece.Create(Piece1Prefab, tilePositions[x, y], transform, true, new Vector2(x, y));
+                    boardState[x, y] = Piece.Create(Piece1Prefab, tilePositions[x, y], transform, true, new Vector2(x, y));
                 }
                 else if (y > height - (InitialRows + 1))
                 {
-                    pieces[x, y] = Piece.Create(Piece2Prefab, tilePositions[x, y], transform, false, new Vector2(x, y));
+                    boardState[x, y] = Piece.Create(Piece2Prefab, tilePositions[x, y], transform, false, new Vector2(x, y));
                 }
             }
         }

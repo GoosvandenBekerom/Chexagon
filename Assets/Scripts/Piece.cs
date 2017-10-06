@@ -20,7 +20,7 @@ public class Piece : MonoBehaviour
         var piece = obj.GetComponent<Piece>();
         piece.IsOwnedByPlayer = isOwnedByPlayer;
         piece.Position = boardPos;
-        GameManager.Instance.Board.Pieces[(int)boardPos.x, (int)boardPos.y] = piece;
+        //GameManager.Instance.Board.Pieces[(int)boardPos.x, (int)boardPos.y] = piece;
         return piece;
     }
     
@@ -55,8 +55,7 @@ public class Piece : MonoBehaviour
 
         if (IsKing)
         {
-            var crown = Instantiate(CrownPrefab, transform);
-            //crown.parent = transform;
+            Instantiate(CrownPrefab, transform);
         }
     }
 }

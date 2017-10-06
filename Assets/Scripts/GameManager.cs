@@ -45,12 +45,6 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (CheckForDoubleJump())
-        {
-            // TODO: start second jump "turn"
-            return;
-        }
-
         IsPlayerTurn = !IsPlayerTurn;
         TurnText.text = IsPlayerTurn ? "Player's Turn (White)" : "AI's Turn (Black)";
         Board.UpdateRequiredMoves();
@@ -62,12 +56,6 @@ public class GameManager : MonoBehaviour
         return Board.Pieces.Cast<Piece>()
             .Where(piece => piece != null)
             .All(piece => piece.IsOwnedByPlayer == IsPlayerTurn);
-    }
-
-    private bool CheckForDoubleJump()
-    {
-        Debug.Log("Check for double jump not implemented");
-        return false; // TODO: implement this check
     }
 
     private void EndGame()
