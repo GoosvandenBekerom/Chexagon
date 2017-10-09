@@ -33,8 +33,8 @@ public class InputManager : MonoBehaviour
     {
         var piece = t.GetComponent<Piece>();
 
-        //if (!piece.IsOwnedByPlayer) return; //TODO: replace this when AI is implemented
-        if (piece.IsOwnedByPlayer != GameManager.Instance.IsPlayerTurn) return;
+        if (!piece.IsOwnedByPlayer && GameManager.Instance.PlayingAgainstAI) return;
+        if (piece.IsOwnedByPlayer != GameManager.Instance.IsPlayerTurn && !GameManager.Instance.PlayingAgainstAI) return;
 
         var requiredToMove = GameManager.Instance.Board.RequiredMoves;
         if (requiredToMove.Count > 0 && requiredToMove.All(m => m.Piece != piece))

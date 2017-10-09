@@ -2,7 +2,8 @@
 
 public class GameNode
 {
-    public Piece[,] GameState { get; private set; }
+    public bool IsPlayerTurn { get; set; }
+    public Piece[,] BoardState { get; private set; }
     public List<GameNode> Children { get; private set; }
 
     public bool IsTerminal
@@ -10,24 +11,39 @@ public class GameNode
         get { return Children.Count == 0; }
     }
 
-    // Heuristic value
-    private bool _calculated = false;
+    private bool _calculated;
     private int _heuristic;
+
     public int Heuristic
     {
         get
         {
-            if (!_calculated) {
-                _heuristic = 1; // TODO: calculate heuristic
+            if (!_calculated)
+            {
+                CalculateHeuristic();
             }
-
             return _heuristic;
         }
     }
 
-    public GameNode(Piece[,] gameState)
+    public GameNode(Piece[,] boardState)
     {
-        GameState = gameState;
+        BoardState = boardState;
         Children = new List<GameNode>();
+    }
+
+    private void CalculateHeuristic()
+    {
+        _heuristic = 1;
+        foreach (var piece in BoardState)
+        {
+            if (piece.IsOwnedByPlayer != IsPlayerTurn) continue;
+
+            bool isKill;
+            var moves = BoardMoves.GetAllowedMoves(BoardState, piece, IsPlayerTurn, out isKill);
+            
+            // TODO: rethink how these gamenodes should be implemented
+        }
+        _calculated = true;
     }
 }
