@@ -16,6 +16,17 @@ public class Board : MonoBehaviour
         RequiredMoves = new List<Move>();
     }
 
+    public void ClearBoard()
+    {
+        foreach (var piece in Pieces)
+        {
+            if (piece == null) continue;
+
+            Destroy(piece.gameObject);
+            Pieces[(int) piece.Position.x, (int) piece.Position.y] = null;
+        }
+    }
+
     public void UpdateRequiredMoves()
     {
         RequiredMoves = BoardMoves.GetRequiredMoves(Pieces, GameManager.Instance.IsPlayerTurn);

@@ -20,6 +20,9 @@ public class GameManager : MonoBehaviour
 
     [Header("UI References")]
     public Text TurnText;
+    public GameObject MenuPanel;
+    public GameObject WinPanel;
+    public Text WinTitle;
 
     public bool IsPlayerTurn { get; private set; }
     public bool PlayingAgainstAI { get; private set; }
@@ -28,30 +31,47 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         _instance = this;
-        IsPlayerTurn = true;
-        PlayingAgainstAI = false;
-        TurnText.text = "Player's Turn (White)";
-        GameOver = false;
     }
 
-	void Start ()
+    void Start()
     {
+        MenuPanel.SetActive(true);
+        WinPanel.SetActive(false);
+
         Grid.Generate();
         Board.Init();
+    }
+
+	public void StartGame (bool againstAI)
+    {
+        PlayingAgainstAI = againstAI;
+        IsPlayerTurn = true;
+        TurnText.text = "Player's Turn (White)";
+        GameOver = false;
+
+        Board.ClearBoard();
 	    PiecesSpawner.Spawn();
+        MenuPanel.SetActive(false);
 	}
+
+    public void ReturnToMainMenu()
+    {
+        MenuPanel.SetActive(true);
+        WinPanel.SetActive(false);
+    }
 
     public void EndTurn()
     {
+        var player2text = PlayingAgainstAI ? "AI" : "Player 2";
+
         if (CheckForWin())
         {
-            Debug.Log(IsPlayerTurn ? "Player won" : "AI won");
-            EndGame();
+            EndGame(IsPlayerTurn ? "Player won" : player2text + " won");
             return;
         }
 
         IsPlayerTurn = !IsPlayerTurn;
-        TurnText.text = IsPlayerTurn ? "Player's Turn (White)" : "AI's Turn (Black)";
+        TurnText.text = IsPlayerTurn ? "Player's Turn (White)" : player2text + "'s Turn (Black)";
         Board.UpdateRequiredMoves();
 
         if (!IsPlayerTurn && PlayingAgainstAI) AI.DoTurn();
@@ -81,9 +101,11 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
-    private void EndGame()
+    private void EndGame(string winText)
     {
         GameOver = true;
-        Debug.Log("Game Ended");
+        Board.ClearBoard();
+        WinTitle.text = winText;
+        WinPanel.SetActive(true);
     }
 }
