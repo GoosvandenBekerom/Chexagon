@@ -58,4 +58,9 @@ public class Piece : MonoBehaviour
             Instantiate(CrownPrefab, transform);
         }
     }
+
+    public override string ToString()
+    {
+        return IsOwnedByPlayer ? (IsKing ? "3" : "1") : (IsKing ? "4" : "2");
+    }
 }

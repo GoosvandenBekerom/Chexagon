@@ -20,4 +20,12 @@ public class Move
         Piece.MoveTo(Destination);
         if (IsKill) GameManager.Instance.Board.KillPiece(Target);
     }
+
+    public override string ToString()
+    {
+        return "Origin: x=" + Piece.Position.x + ", y=" + Piece.Position.y +
+               " - Destination: x=" + Destination.x + ", y=" + Destination.y +
+               " - Is Kill?: " + IsKill +
+               " - Target Position: x=" + Target.Position.x + ", y=" + Target.Position.y;
+    }
 }

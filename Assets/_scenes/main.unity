@@ -419,7 +419,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Play againt AI
+  m_Text: Play against AI
 --- !u!222 &355679837
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1164,7 +1164,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Player 2 Won
+  m_Text: Winner Title
 --- !u!222 &1061253714
 CanvasRenderer:
   m_ObjectHideFlags: 0

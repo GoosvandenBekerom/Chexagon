@@ -22,7 +22,7 @@ public class PiecesSpawner : MonoBehaviour
         {
             for (var x = 0; x < width; x++)
             {
-                if (x % 2 != 0 && (y == 0 || y == height - 1)) continue;
+                //if (x % 2 != 0 && (y == 0 || y == height - 1)) continue;
 
                 if (y < InitialRows)
                 {
