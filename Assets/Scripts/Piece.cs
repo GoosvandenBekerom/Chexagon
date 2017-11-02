@@ -61,6 +61,8 @@ public class Piece : MonoBehaviour
 
     public override string ToString()
     {
-        return IsOwnedByPlayer ? (IsKing ? "3" : "1") : (IsKing ? "4" : "2");
+        return IsOwnedByPlayer
+            ? (IsKing ? BoardOccupation.PLAYER_1_KING + "" : BoardOccupation.PLAYER_1 + "")
+            : (IsKing ? BoardOccupation.PLAYER_2_KING + "" : BoardOccupation.PLAYER_2 + "");
     }
 }

@@ -6,13 +6,16 @@ using System.Linq;
 public class GameNode
 {
     public int[,] BoardState { get; private set; }
+    public GameNode Parent { get; private set; }
+    public bool HasParent { get { return Parent != null; } }
     public Dictionary<GameNode, VirtualMove> Children { get; private set; }
     public bool IsTerminal { get { return Children.Count == 0; } }
     public bool IsKillingState { get; private set; }
     
-    public GameNode(int[,] boardState)
+    public GameNode(int[,] boardState, GameNode parent = null)
     {
         BoardState = boardState;
+        Parent = parent;
         Children = new Dictionary<GameNode, VirtualMove>();
         IsKillingState = false;
     }
@@ -61,7 +64,7 @@ public class GameNode
             newState[move.Origin.x, move.Origin.y] = BoardOccupation.PLAYER_NONE;
             if (move.IsKill) newState[move.KillLocation.x, move.KillLocation.y] = BoardOccupation.PLAYER_NONE;
 
-            Children.Add(new GameNode(newState), move);
+            Children.Add(new GameNode(newState, this), move);
         }
     }
 
@@ -132,5 +135,16 @@ public class GameNode
         
         _calculated = true;
         return _heuristic;
+    }
+
+    public void SetHeuristic(int heuristic)
+    {
+        _calculated = true;
+        _heuristic = heuristic;
+
+        if (HasParent)
+        {
+            Parent.SetHeuristic(_heuristic);
+        }
     }
 }

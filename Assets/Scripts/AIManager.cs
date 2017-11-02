@@ -55,23 +55,18 @@ public class AIManager : MonoBehaviour
         var boardState = ConvertToVirtualBoard(GameManager.Instance.Board.Pieces);
         var root = new GameNode(boardState);
         //PrintBoard(root.BoardState);
-        const int depth = 1;
+        const int depth = 3;
 
         BuildTree(root, depth, GameManager.Instance.IsPlayerTurn);
 
         var bestvalue = Minimax(root, depth, GameManager.Instance.IsPlayerTurn);
 
         // find the move associated with this value
-        foreach (var child in root.Children)
-        {
-            var node = child.Key;
-            if (node.GetHeuristic() == bestvalue)
-            {
-                var move = CreateMoveFromVirtualMove(child.Value);
-                move.Execute();
-                break;
-            }
-        }
+        var potentialMoves = (from child in root.Children let node = child.Key
+                              where node.GetHeuristic() == bestvalue
+                              select CreateMoveFromVirtualMove(child.Value)).ToList();
+
+        potentialMoves[Random.Range(0, potentialMoves.Count)].Execute();
 
         GameManager.Instance.EndTurn();
     }
@@ -88,7 +83,7 @@ public class AIManager : MonoBehaviour
         }
     }
 
-    private int Minimax(GameNode node, int depth, bool maximizingPlayer)
+    private static int Minimax(GameNode node, int depth, bool maximizingPlayer)
     {
         if (depth == 0 || node.IsTerminal) return node.GetHeuristic();
 
@@ -100,6 +95,7 @@ public class AIManager : MonoBehaviour
                 var value = Minimax(child, depth - 1, !maximizingPlayer);
                 bestValue = Max(bestValue, value);
             }
+            node.SetHeuristic(bestValue);
             return bestValue;
         }
         else
@@ -110,44 +106,8 @@ public class AIManager : MonoBehaviour
                 var value = Minimax(child, depth - 1, !maximizingPlayer);
                 bestValue = Min(bestValue, value);
             }
+            node.SetHeuristic(bestValue);
             return bestValue;
-        }
-    }
-
-    public void PrintBoard(int[,] state)
-    {
-        for (var y = state.GetLength(0) - 1; y >= 0; y--)
-        {
-            var line = "";
-            const string space = "  ";
-
-            if (y % 2 != 0) line += space;
-            for (var x = 0; x < state.GetLength(1); x++)
-            {
-                line += state[x, y] + space;
-            }
-            Debug.Log(line);
-        }
-    }
-
-    public void PrintBoard(Piece[,] state)
-    {
-        for (var y = state.GetLength(0) - 1; y >= 0; y--)
-        {
-            var line = "";
-            const string space = "  ";
-
-            if (y % 2 != 0) line += space;
-            for (var x = 0; x < state.GetLength(1); x++)
-            {
-                if (state[x, y] == null)
-                {
-                    line += "0" + space;
-                    continue;
-                }
-                line += state[x, y] + space;
-            }
-            Debug.Log(line);
         }
     }
 
@@ -199,5 +159,42 @@ public class AIManager : MonoBehaviour
         return virtualMove.IsKill 
             ? new Move(piece, dest, true, board[virtualMove.KillLocation.x, virtualMove.KillLocation.y]) 
             : new Move(piece, dest);
+    }
+
+    public void PrintBoard(int[,] state)
+    {
+        for (var y = state.GetLength(0) - 1; y >= 0; y--)
+        {
+            var line = "";
+            const string space = "  ";
+
+            if (y % 2 != 0) line += space;
+            for (var x = 0; x < state.GetLength(1); x++)
+            {
+                line += state[x, y] + space;
+            }
+            Debug.Log(line);
+        }
+    }
+
+    public void PrintBoard(Piece[,] state)
+    {
+        for (var y = state.GetLength(0) - 1; y >= 0; y--)
+        {
+            var line = "";
+            const string space = "  ";
+
+            if (y % 2 != 0) line += space;
+            for (var x = 0; x < state.GetLength(1); x++)
+            {
+                if (state[x, y] == null)
+                {
+                    line += "0" + space;
+                    continue;
+                }
+                line += state[x, y] + space;
+            }
+            Debug.Log(line);
+        }
     }
 }
